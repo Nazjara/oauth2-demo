@@ -25,7 +25,7 @@ public class SecurityConfiguration
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .antMatchers(HttpMethod.GET, "/user/status/check")
+                        .antMatchers(HttpMethod.GET, "/user")
                         .hasAnyAuthority("ROLE_developer", "SCOPE_profile")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer()
