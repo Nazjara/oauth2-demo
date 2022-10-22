@@ -19,6 +19,7 @@ public class UserController {
     @PostAuthorize("returnObject.id == #jwt.subject")
     @GetMapping("/{id}")
     public User get(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) {
+        System.out.println("Received request for a user...");
         return User.builder()
                 .id(jwt.getSubject())
                 .firstName(jwt.getClaimAsString("given_name"))

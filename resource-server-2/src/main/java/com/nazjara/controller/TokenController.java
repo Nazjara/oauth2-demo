@@ -12,6 +12,7 @@ public class TokenController {
 
     @GetMapping
     public Jwt getToken(@AuthenticationPrincipal Jwt jwt) {
+        System.out.println("Received request for a token...");
         return jwt;
     }
 }
