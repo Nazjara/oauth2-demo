@@ -20,6 +20,7 @@
 		<module>resource-server-1</module>
 		<module>resource-server-2</module>
 		<module>api-gateway</module>
+		<module>discovery-service</module>
 	</modules>
 
 </project>

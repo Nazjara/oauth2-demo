@@ -11,7 +11,7 @@
 
 	<artifactId>resource-server-1</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>resource-server-2</name>
+	<name>resource-server-1</name>
 
 	<properties>
 		<java.version>11</java.version>
