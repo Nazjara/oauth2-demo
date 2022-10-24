@@ -1,0 +1,22 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User details</title>
+</head>
+<body>
+<h1>User details</h1>
+<div>
+    <h2>User</h2>
+    <p><span th:text="'User id: ' + ${user.id}"></span></p>
+    <p><span th:text="'User first name: ' + ${user.firstName}"></span></p>
+    <p><span th:text="'User last name: ' + ${user.lastName}"></span></p>
+    <p><span th:text="'User email: ' + ${user.email}"></span></p>
+    <h2>Token</h2>
+    <p><span th:text="'Token id: ' + ${token.id}"></span></p>
+    <p><span th:text="'Token scope: ' + ${token.scope}"></span></p>
+    <p><span th:text="'Token expiration date: ' + ${token.expirationDate}"></span></p>
+</div>
+</body>
+</html>
