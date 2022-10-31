@@ -22,6 +22,7 @@
 		<module>api-gateway</module>
 		<module>discovery-server</module>
 		<module>web-client</module>
+		<module>js-client</module>
 	</modules>
 
 </project>
