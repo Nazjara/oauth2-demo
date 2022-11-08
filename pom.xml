@@ -23,6 +23,7 @@
 		<module>discovery-server</module>
 		<module>web-client</module>
 		<module>js-client</module>
+		<module>remote-user-storage-provider</module>
 	</modules>
 
 </project>
