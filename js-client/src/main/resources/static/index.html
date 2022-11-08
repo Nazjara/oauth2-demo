@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS client with PKCE</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        function generateState(length) {
+            let stateValue = "";
+            let alphaNumericCharacters = 'ACBDEFGHIGKLMNOPQRSTUVWXYZacbdefghigklmnopqrstuvwxyz0123456789';
+
+            for (let i = 0; i < length; i++) {
+                stateValue += alphaNumericCharacters.charAt(Math.floor(Math.random() * alphaNumericCharacters.length));
+            }
+
+            document.getElementById("stateValue").innerHTML = stateValue;
+        }
+
+        function generateCodeVerifier() {
+            let randomByteArray = new Uint8Array(32);
+            window.crypto.getRandomValues(randomByteArray);
+            document.getElementById("codeVerifierValue").innerHTML = base64urlEncode(randomByteArray);
+        }
+
+        function base64urlEncode(sourceValue) {
+            let stringValue = String.fromCharCode.apply(null, sourceValue);
+            let base64Encoded = btoa(stringValue);
+            return base64Encoded.replace(/\+/g, '-').replace(/\//g, '-').replace(/=/g, '');
+        }
+
+        async function generateCodeChallenge() {
+            let codeChallengeValue = "";
+            let codeVerifier = document.getElementById("codeVerifierValue").innerHTML;
+            let textEncoder = new TextEncoder('US-ASCII');
+            let encodedValue = textEncoder.encode(codeVerifier);
+            let digest = await window.crypto.subtle.digest("SHA-256", encodedValue)
+            codeChallengeValue = base64urlEncode(Array.from(new Uint8Array(digest)));
+            document.getElementById("codeChallengeValue").innerHTML = codeChallengeValue;
+        }
+
+        function getAuthCode() {
+            let state = document.getElementById("stateValue").innerHTML;
+            let codeChallenge = document.getElementById("codeChallengeValue").innerHTML;
+
+            let authorizationUrl = "http://localhost:8080/realms/custom-realm/protocol/openid-connect/auth";
+            authorizationUrl += "?client_id=js-client";
+            authorizationUrl += "&response_type=code";
+            authorizationUrl += "&scope=openid";
+            authorizationUrl += "&redirect_uri=http://localhost:8086/authcodereader.html";
+            authorizationUrl += "&state=" + state;
+            authorizationUrl += "&code_challenge=" + codeChallenge;
+            authorizationUrl += "&code_challenge_method=S256";
+
+            window.open(authorizationUrl, 'authorizationRequestWindow', 'width=800,height=600,left=200,top=200');
+        }
+
+        function postAuthorize(state, authCode) {
+            let originalState = document.getElementById("stateValue").innerHTML;
+
+            if (state === originalState) {
+                requestToken(authCode);
+            } else {
+                alert("Invalid state received");
+            }
+        }
+
+        function requestToken(authCode) {
+            let codeVerifier = document.getElementById("codeVerifierValue").innerHTML;
+            let data = {
+                "grant_type": "authorization_code",
+                "client_id": "js-client",
+                "code": authCode,
+                "code_verifier": codeVerifier,
+                "redirect_uri": "http://localhost:8086/authcodereader.html"
+            }
+
+            $.ajax({
+                beforeSend: function (request) {
+                    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                    // request.setRequestHeader("Access-Control-Allow-Origin", "*")
+                },
+                type: "POST",
+                url: "http://localhost:8080/realms/custom-realm/protocol/openid-connect/token",
+                data: data,
+                success: postRequestAccessToken,
+                dataType: "json"
+            });
+        }
+
+        function postRequestAccessToken(data, status, jqXHR) {
+            document.getElementById("accessToken").innerHTML = data["access_token"];
+        }
+
+        function getTokenDetails() {
+            let accessToken = document.getElementById("accessToken").innerHTML;
+
+            $.ajax({
+                beforeSend: function (request) {
+                    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                    request.setRequestHeader("Authorization", "Bearer " + accessToken)
+                },
+                type: "GET",
+                url: "http://localhost:8083/token",
+                success: postInfoFromAccessToken,
+                dataType: "text"
+            });
+        }
+
+        function postInfoFromAccessToken(data, status, jqXHR) {
+            alert(data);
+        }
+    </script>
+</head>
+<body>
+<h1>Index page</h1>
+
+<div><input type="button" value="Generate state value" onclick="generateState(30)"/></div>
+<div id="stateValue"></div>
+<br/>
+
+<div><input type="button" value="Generate code verifier value" onclick="generateCodeVerifier()"/></div>
+<div id="codeVerifierValue"></div>
+<br/>
+
+<div><input type="button" value="Generate code challenge value" onclick="generateCodeChallenge()"/></div>
+<div id="codeChallengeValue"></div>
+<br/>
+
+<div><input type="button" value="Get Auth code" onclick="getAuthCode()"/></div>
+<br/>
+
+<p>Access token: <span id="accessToken"></span></p>
+<br/>
+
+<div><input type="button" value="Get token details" onclick="getTokenDetails()"/></div>
+<div id="tokenDetailsValue"></div>
+<br/>
+</body>
+</html>
