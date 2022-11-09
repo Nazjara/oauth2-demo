@@ -24,6 +24,7 @@
 		<module>web-client</module>
 		<module>js-client</module>
 		<module>remote-user-storage-provider</module>
+		<module>spring-authorization-server</module>
 	</modules>
 
 </project>
