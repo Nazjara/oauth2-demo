@@ -42,8 +42,8 @@ public class AuthorizationServerConfiguration {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUris((Set<String> s) -> {
-                    s.add("http://127.0.0.1:8087/login/oauth2/code/users-client-oidc");
-                    s.add("http://127.0.0.1:8087/authorized");
+                    s.add("http://127.0.0.1:8085/login/oauth2/code/users-client-oidc");
+                    s.add("http://127.0.0.1:8085/authorized");
                 })
                 .scope(OidcScopes.OPENID)
                 .scope("read")
@@ -63,7 +63,7 @@ public class AuthorizationServerConfiguration {
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder()
-                .issuer("http://127.0.0.1:8087")
+                .issuer("http://auth-server:8087")
                 .build();
     }
 

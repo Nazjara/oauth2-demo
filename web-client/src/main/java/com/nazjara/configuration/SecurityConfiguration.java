@@ -12,11 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfiguration
 {
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return (web) -> web.ignoring().antMatchers("/ignore1", "/ignore2");
-//    }
-
     final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
